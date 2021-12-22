@@ -1,4 +1,4 @@
-(ns advent2021.day04)
+(ns advent2021.day04-02)
 
 (defn read-data
   ;
