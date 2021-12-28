@@ -1,147 +1,164 @@
 (ns advent2021.day04-02)
 
+;;;;; fns to retrieve data ;;;;;;
+
+(def BOARD-SIZE 5)
+
 (defn read-data
+  "Get all file data as a vector of strings."
   [file]
   (->>
     (clojure.string/split (slurp file) #"\r\n")))
 
-(def file-data (read-data "resources/day4-input-test.txt"))
-;;(def file-data (read-data "resources/day4-input.txt"))
-
-(defn get-bingo-calls
+(defn get-calls
+  "Get all the bingo calls as a vector from file-data."
   [file-data]
   (read-string
     (str "[" (first file-data) "]")))
 
-(def bingo-calls (get-bingo-calls file-data))
-
 (defn get-next-board
+  "Get one board as a vector from file-data."
   [file-data]
   (->>
     (drop 1 file-data)
-    (take 5)
+    (take BOARD-SIZE)
     (map #(str "[" % "]"))
     (apply str)
     (#(str "[" % "]"))
     (read-string)))
 
 (defn get-all-boards
+  "Get all the boards vector from file-data."
   [file-data]
   (if (seq file-data)
-    (let [this-board-data (take 6 file-data)
-          rest-board-data (drop 6 file-data)]
+    (let #_[this-board-data (take (inc BOARD-SIZE) file-data)
+            rest-board-data (drop (inc BOARD-SIZE) file-data)]
+      [[this-board-data rest-board-data] (split-at (inc BOARD-SIZE) file-data)]
       (conj (get-all-boards rest-board-data) (get-next-board this-board-data)))
     (vector)))
 
-(defn get-board-data
+(defn get-boards
+  "Exract all the boards from the file-data."
   [file-data]
   (vec (reverse (get-all-boards (drop 1 file-data)))))
 
-(def board-data (get-board-data file-data))
+;;;;; Helpers ;;;;;;
 
-;(defn check-number
-;  [number board]
-;  (->>
-;    (apply concat board)
-;    (mapv #(if (= number %) (- number) %))
-;    (partition 5)
-;    (mapv vec)))
-;
-;; test
-;; (def board (first (get-board-data file-data)))
+(defn tee
+  "Split a sequence on the basis of a predicate. Consumes all of seq."
+  [pred? seq]
+  (reduce (fn [[ta fa] e]
+            (if (pred? e)
+              [(conj ta e) fa]
+              [ta (conj fa e)]))
+          [[] []]
+          seq))
 
 (defn rows
-  [board]
-  board)
-;
+  "Return all the rows from a m by n matrix."
+  [matrix]
+  matrix)
+
 (defn cols
-  [board]
-  (for [n (range (count (first board)))]
-    (map #(nth % n) board)))
-;
-(defn filled? [row-or-col]
+  "Return all the columns from a m by n matrix."
+  [matrix]
+  (for [n (range (count (first matrix)))]
+    (map #(nth % n) matrix)))
+
+(defn third
+  "Grab the third element."
+  [s]
+  (first (drop 2 s)))
+
+;; Specific
+
+(defn filled?
+  "Check if a row or column is filled - i.e. every entry is -ve."
+  [row-or-col]
   (every? neg? row-or-col))
-;
-;(defn score-board
-;  [board]
-;  (reduce + (filter pos? (apply concat (cols board)))))
-;
-;(defn winning-board?
-;  [board]
-;  (let [all-rowcols (concat (rows board) (cols board))]
-;    (when (some filled? all-rowcols)
-;      (score-board board))))
-;
-;
-;(winning-board?
-;  [[1 -2 3 -4]
-;   [-1 2 -3 -4]
-;   [-1 2 3 4]
-;   [-1 2 3 -4]])
-;
-;(score-board
-;  [[1 -2 3 -4]
-;   [-1 -2 -3 -4]
-;   [-1 2 3 -4]
-;   [-1 2 3 -4]])
-;
-;(defn update-boards
-;  [boards num]
-;  (map (partial check-number num) boards))
-;
-;(defn apply-bingo-calls
-;  [boards bingo-calls]
-;  (if (seq bingo-calls)
-;    (let [this-bingo-call (first bingo-calls)
-;          updated-boards (update-boards boards this-bingo-call)
-;          board-score (some winning-board? updated-boards)]
-;      (if board-score
-;        {:boards    updated-boards
-;         :last-call this-bingo-call
-;         :score     (* this-bingo-call board-score)}
-;        (apply-bingo-calls
-;          updated-boards
-;          (rest bingo-calls))))
-;    nil))
-;
-;(apply-bingo-calls board-data bingo-calls)
-
-;; part2
-
-;(reductions (fn [a e] (update-boards a e)) board-data bingo-calls)
-
-(def state {:winning-boards []
-            :boards board-data})
 
 (defn update-board
+  "Update a board with a single number call."
   [board number]
   (->>
     (apply concat board)
-    (mapv #(if (= number %) (- number) %))
+    (mapv #(if (= number %) (- (+ number 100)) %))
     (partition 5)
     (mapv vec)))
 
-(defn is-winning-board?
-  [board]
-  (let [all-rowcols (concat (rows board) (cols board))]
-    (keyword (str (boolean (some filled? all-rowcols))))))
-
-;(keyword (str false))
-;(defn check-board [board]
-;  {:board board
-;   :is-winning-board? (is-winning-board? board)}
-;  )
-
-;(def board-data2 (map check-board board-data))
-
-(defn make-call [board-data call-number]
+(defn update-boards
+  "Update all board with a single number call."
+  [board-data call-number]
   (map #(update-board % call-number) board-data))
 
-(defn split-winners-losers [board-data]
-  (merge
-    {:true [] :false []}
-    (group-by is-winning-board? board-data)))
+(defn is-winning-board?
+  "Check to see if board is a winnign board.
+  That is, either 1 row is fully crossed off or 1 column is fully crossed off."
+  [board]
+  (let [all-rowcols (concat (rows board) (cols board))]
+    (boolean (some filled? all-rowcols))))
 
-(get {:this :that} :that :notfound)
+(defn make-calls
+  "Apply all calls to boards in turn, returning a vector of:
+  [[call, winning_boards, remaining_boards] .... ]."
+  [boards calls]
+  (reductions
+    (fn [[_ winners boards] call]
+      (let [[this_winners this_boards] (tee is-winning-board? (update-boards boards call))]
+        (vector call (vec (concat winners this_winners)) this_boards)))
+    [:start [] boards]
+    calls))
 
-(hash-map 1 2)
+(defn play-bingo
+  "Read a bingo file and play the game - returning all moves and positions."
+  [file-name]
+  (let
+    [file-data (read-data file-name)
+     boards (get-boards file-data)
+     calls (get-calls file-data)]
+    (make-calls boards calls)))
+
+(defn display-board
+  "Handy for debug."
+  [board]
+  (for [row board]
+    (do
+      (print "[")
+      (doall (for [cell row]
+               (printf "%5d" cell)))
+      (println "]"))))
+
+(defn score-move
+  "Get the score for a single move (i.e. a single entry returned from play-bingo).
+  Assumes a winning move is passed-in, although all moves will return a score."
+  [[call winners _]]
+  (* call (apply + (filter pos? (apply concat (last winners))))))
+
+(defn first-winner
+  "Get the first winner"
+  [file-name]
+  (first
+    (drop-while
+      #(empty? (second %))
+      (play-bingo file-name))))
+
+(defn last-winner
+  "Get the last winner"
+  [file-name]
+  (first
+    (drop-while
+      #(not-empty (third %))
+      (play-bingo file-name))))
+
+; answer 1 test: 4512
+(score-move (first-winner "resources/day4-input-test.txt"))
+
+; answer 2 test: 1924
+(score-move (last-winner "resources/day4-input-test.txt"))
+
+
+; answer 1: 89001
+(score-move (first-winner "resources/day4-input.txt"))
+
+; answer 2: 7296
+(score-move (last-winner "resources/day4-input.txt"))
