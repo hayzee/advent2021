@@ -3,18 +3,16 @@
 (def FILE-NAME-TEST "resources/day8-input-test.txt")
 
 (def FILE-NAME "resources/day8-input.txt")
-;
-;(def FILE-NAME "resources/day8-input.txt")
-;
+
 (defn file-data
   ; Read file data and return a vector of strings for each row.
   [file-name]
   (clojure.string/split (slurp file-name) #"\r\n"))
-;
+
 (defn str->wordvec
   [instr]
   (clojure.string/split instr #" "))
-;
+
 (defn file-data-row->signal-entry
   ; Take a single row of file-data and create a single signal-entry.
   [file-data-row]
@@ -22,7 +20,6 @@
     (clojure.string/split file-data-row #"\|")
     (mapv clojure.string/trim)
     (mapv str->wordvec)))
-
 
 ; num     #segs   unique              check order
 ; ======= ======= ==============			===========
@@ -38,16 +35,6 @@
 ; 8       7       Y                   1
 ; 9       6       subsumes 1 and
 ;                 subsumes 4          2
-
-(def filedata (file-data FILE-NAME-TEST))
-
-;(def signal-entries (map file-data-row->signal-entry filedata))
-;
-;(def signal-input (map str '[acedgfb cdfbe gcdfa fbcad dab cefabd cdfgeb eafb cagedb ab]))
-;
-;(def signal-output (map str '[cdfeb fcadb cdfeb cdbaf]))
-;
-;(def signal-output ["fgae" "cfgab" "fg" "bagce"])
 
 (defn diffsize [s1 s2]
   "True if s2 is subsumed by s1"
@@ -88,8 +75,15 @@
          (map set)
          (map digit-map))))
 
-(decode-signal-ouput [signal-input signal-output])
 
+;; Test answer !!!
+(->>
+  (file-data FILE-NAME-TEST)
+  (map file-data-row->signal-entry)
+  (map decode-signal-ouput)
+  (map #(apply str %))
+  (map #(Integer/parseInt %))
+  (reduce +))
 
 ;; The answer !!!
 (->>
