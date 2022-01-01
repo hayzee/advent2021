@@ -1,6 +1,8 @@
 (ns advent2021.day08-02)
 
 (def FILE-NAME-TEST "resources/day8-input-test.txt")
+
+(def FILE-NAME "resources/day8-input.txt")
 ;
 ;(def FILE-NAME "resources/day8-input.txt")
 ;
@@ -20,43 +22,6 @@
     (clojure.string/split file-data-row #"\|")
     (mapv clojure.string/trim)
     (mapv str->wordvec)))
-;
-;(defn signal-entries
-;  ; Create signal-entries [a vector of signal-entry] from file data.
-;  [file-data]
-;  (mapv file-data-row->signal-entry file-data))
-;
-;(def seglen->digit
-;  {2 1
-;   4 4
-;   3 7
-;   7 8
-;   1 \|
-;   })
-;
-;;; Part 1
-;
-;(defn signal-output-tokens
-;  ; Work out digits for a signal entry
-;  [[signal-input signal-output]]
-;  (map #(seglen->digit (count %)) (clojure.string/split signal-output #" ")))
-;
-;;; Check with test file
-;
-;(->>
-;  (signal-entries (file-data FILE-NAME-TEST))
-;  (mapcat signal-output-tokens)
-;  (remove nil?)
-;  count)
-;
-;
-;;; Actual file
-;
-;(->>
-;  (signal-entries (file-data FILE-NAME))
-;  (mapcat signal-output-tokens)
-;  (remove nil?)
-;  count)
 
 
 ; num     #segs   unique              check order
@@ -74,15 +39,16 @@
 ; 9       6       subsumes 1 and
 ;                 subsumes 4          2
 
-(def file-data (file-data FILE-NAME-TEST))
+(def filedata (file-data FILE-NAME-TEST))
 
-(def signal-entries (map file-data-row->signal-entry file-data))
+;(def signal-entries (map file-data-row->signal-entry filedata))
+;
+;(def signal-input (map str '[acedgfb cdfbe gcdfa fbcad dab cefabd cdfgeb eafb cagedb ab]))
+;
+;(def signal-output (map str '[cdfeb fcadb cdfeb cdbaf]))
+;
+;(def signal-output ["fgae" "cfgab" "fg" "bagce"])
 
-(def signal-input (map str '[acedgfb cdfbe gcdfa fbcad dab cefabd cdfgeb eafb cagedb ab]))
-
-(def signal-output (map str '[cdfeb fcadb cdfeb cdbaf]))
-
-(def signal-output ["fgae" "cfgab" "fg" "bagce"])
 (defn diffsize [s1 s2]
   "True if s2 is subsumed by s1"
   (count (clojure.set/difference s2 s1)))
@@ -114,15 +80,23 @@
             :else (conj a [e "??"])))) {})
     clojure.set/map-invert))
 
-(def digit-map (signal-input->digit-map signal-input))
 
 (defn decode-signal-ouput
-  [signal-output digit-map]
-  (->> signal-output
-       (map set)
-       (map digit-map)))
+  [[signal-input signal-output]]
+  (let [digit-map (signal-input->digit-map signal-input)]
+    (->> signal-output
+         (map set)
+         (map digit-map))))
 
-(decode-signal-ouput signal-output digit-map)
+(decode-signal-ouput [signal-input signal-output])
 
 
+;; The answer !!!
+(->>
+  (file-data FILE-NAME)
+  (map file-data-row->signal-entry)
+  (map decode-signal-ouput)
+  (map #(apply str %))
+  (map #(Integer/parseInt %))
+  (reduce +))
 
