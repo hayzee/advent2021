@@ -53,15 +53,50 @@
   [hm]
   (reduce + (map inc (find-minima hm))))
 
-(def hm-test (file-data->height-map (file-data FILE-NAME-TEST)))
-(def hm (file-data->height-map (file-data FILE-NAME)))
+; Test answer
+(risk-level (file-data->height-map (file-data FILE-NAME-TEST)))
 
-(risk-level hm)
-
-;2199943210
-;3987894921
-;9856789892
-;8767896789
-;9899965678
+; Actual Answer
+(risk-level (file-data->height-map (file-data FILE-NAME)))
 
 
+
+;; Part 2 starts here:
+;; Part 2 starts here:
+;; Part 2 starts here:
+;; Part 2 starts here:
+;; Part 2 starts here:
+
+(def hm (file-data->height-map (file-data FILE-NAME-TEST)))
+
+(clojure.pprint/pprint hm)
+
+(defn surround-coords
+  [[r c]]
+  (->>
+    [
+     [r c]
+     [r (dec c)]
+     [(dec r) c]
+     [r (inc c)]
+     [(inc r) c]]))
+
+(map #(vector % (get-in hm %)) (surround-coords [2 2]))
+
+(remove nil?)
+
+(defn elevate-from [hm level {:keys [visited unvisited] :as visit-map}]
+  (if (seq unvisited)
+    (elevate-from
+      hm
+      (inc level)
+      {:visited   (reduce conj visited unvisited)
+       :unvisited (vec (filter #(and
+                                  (= (inc level) (get-in hm %))
+                                  (not= 9 (get-in hm %))) (distinct (mapcat #(surround-coords %) unvisited))))})
+    visit-map))
+
+(elevate-from hm 5 {:visited [] :unvisited #{[2 2]}})
+
+
+(range 2 1001 2)
