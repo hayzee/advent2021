@@ -25,29 +25,37 @@
        file-data
        file-data->height-map))
 
+(defn surrounds-coords
+  [[r c]]
+  (->>
+    [
+     [r c]
+     [r (dec c)]
+     [(dec r) c]
+     [r (inc c)]
+     [(inc r) c]]))
+
 (defn surrounds
   [hm [r c]]
   (->>
-    [
-     (get-in hm [r c])
-     (get-in hm [r (dec c)])
-     (get-in hm [(dec r) c])
-     (get-in hm [r (inc c)])
-     (get-in hm [(inc r) c])
-     ]
+    (mapv #(get-in hm %) (surrounds-coords [r c]))
     (remove nil?)))
 
 (defn minima? [hm [r c]]
   (let [[f & r] (surrounds hm [r c])]
     (< f (apply min r))))
 
-(defn find-minima
+(defn find-minima-coords
   [hm]
   (for [r (range (count hm))
         c (range (count (first hm)))
         :when (minima? hm [r c])
         ]
-    (get-in hm [r c])))
+    [r c]))
+
+(defn find-minima
+  [hm]
+  (map #(get-in hm %) (find-minima-coords hm)))
 
 (defn risk-level
   [hm]
@@ -59,31 +67,12 @@
 ; Actual Answer
 (risk-level (file-data->height-map (file-data FILE-NAME)))
 
-
-
 ;; Part 2 starts here:
 ;; Part 2 starts here:
 ;; Part 2 starts here:
 ;; Part 2 starts here:
 ;; Part 2 starts here:
 
-(def hm (file-data->height-map (file-data FILE-NAME-TEST)))
-
-(clojure.pprint/pprint hm)
-
-(defn surround-coords
-  [[r c]]
-  (->>
-    [
-     [r c]
-     [r (dec c)]
-     [(dec r) c]
-     [r (inc c)]
-     [(inc r) c]]))
-
-(map #(vector % (get-in hm %)) (surround-coords [2 2]))
-
-(remove nil?)
 
 (defn elevate-from [hm level {:keys [visited unvisited] :as visit-map}]
   (if (seq unvisited)
@@ -93,10 +82,42 @@
       {:visited   (reduce conj visited unvisited)
        :unvisited (vec (filter #(and
                                   (= (inc level) (get-in hm %))
-                                  (not= 9 (get-in hm %))) (distinct (mapcat #(surround-coords %) unvisited))))})
+                                  (not= 9 (get-in hm %))) (distinct (mapcat #(surrounds-coords %) unvisited))))})
     visit-map))
 
-(elevate-from hm 5 {:visited [] :unvisited #{[2 2]}})
+
+(defn basin-size
+  [hm [r c]]
+  (count (:visited (elevate-from hm (get-in hm [r c]) {:visited [] :unvisited #{[r c]}}))))
 
 
-(range 2 1001 2)
+(defn get-heightmap-basin-size-product
+  [hm]
+  (->>
+    (map #(basin-size hm %) (find-minima-coords hm))
+    (sort >)
+    #_(take 3)
+    #_(reduce *)))
+
+(defn basin-size-product [file-name]
+  (get-heightmap-basin-size-product (file-data->height-map (file-data file-name))))
+
+; 1134
+(basin-size-product FILE-NAME-TEST)
+
+; 435666
+(basin-size-product FILE-NAME)
+
+
+
+(def hm (file-data->height-map (file-data FILE-NAME)))
+
+(clojure.pprint/pprint hm)
+
+(->>
+  (find-minima-coords hm)
+  (map #(basin-size hm %))
+  (sort >)
+  (take 3)
+  (reduce *))
+
