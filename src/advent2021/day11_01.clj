@@ -2,7 +2,7 @@
 
 (def ^:private FILE-NAME "resources/day11-input.txt")
 
-(def FILE-NAME-TEST "resources/day11-input-test.txt")
+(def ^:private FILE-NAME-TEST "resources/day11-input-test.txt")
 
 (defn file-data
   "Read file data and return a vector of strings for each row."
@@ -69,7 +69,7 @@
   "predicate to determine if a the cell is flashing"
   (= 10 cell))
 
-(defn- find-flashers
+(defn find-flashers
   [grid]
   "find all the flashers in a grid"
   (find-grid grid flasher?))
@@ -91,9 +91,13 @@
     coords))
 
 (defn grid-step
+  ;; yuk - requires rework!
   [grid]
   (let [igrid (inc-grid grid)
-        ifadj (get-flasher-adjacents igrid)]))
+        ifadj (get-flasher-adjacents igrid)]
+    (if (seq ifadj)
+      (grid-step (apply-to-grid igrid ifadj inc))
+      igrid)))
 
 
 ; Algorithm - (per step)
