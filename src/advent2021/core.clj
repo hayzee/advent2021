@@ -144,7 +144,7 @@
   (let [data (slurp fname)
         vos (clojure.string/split data #"\r\n")             ; vector of strings
         boundary (quot (count vos) 2)]
-    (mapv (fn [vos] (map #(Character/digit ^char % 10) %)) (seq vos))))
+    (mapv (fn [vos] (map #(Character/digit ^char % 10) vos)) (seq vos))))
 ; vector of sequence of char
 
 
@@ -163,52 +163,50 @@
 (defn gamma-vec [sumvec]
   (mapv #(if (> 2 %) 1 0) sumvec))
 
-(gamma-vec (sum-binvec [[1 0 1 1 0] [1 1 1 1 1] [1 0 0 0 0]]))
+(comment
 
-(defn day3-part1 []
-  (let [data (slurp "resources/day3-input-test.txt")
-        vos (clojure.string/split data #"\r\n")             ; vector of strings
-        boundary (quot (count vos) 2)]
-    (->>
-      vos
-      (mapv (fn [vos] (map #(Character/digit ^char % 10) (seq vos)))) ; vector of sequence of char
-      ;(reduce sumvecs)
-      ;(map #(if (< boundary %) \1 \0))
-      ;(apply str)
-      ;;(apply map vector)  ; Transpose
-      ;;(map frequencies)
-      ;;(map (partial sort-by second))
-      ;;(map #(first (second %)))
-      ;;(apply str)
-      ;;(vector)
-      ;;binstr->int
-      )))
+ (gamma-vec (sum-binvec [[1 0 1 1 0] [1 1 1 1 1] [1 0 0 0 0]]))
 
-(defn accumulate-vectors [vec-of-vecs]
+ (defn day3-part1 []
+   (let [data (slurp "resources/day3-input-test.txt")
+         vos (clojure.string/split data #"\r\n")            ; vector of strings
+         boundary (quot (count vos) 2)]
+     (->>
+       vos
+       (mapv (fn [vos] (map #(Character/digit ^char % 10) (seq vos)))) ; vector of sequence of char
+       ;(reduce sumvecs)
+       ;(map #(if (< boundary %) \1 \0))
+       ;(apply str)
+       ;;(apply map vector)  ; Transpose
+       ;;(map frequencies)
+       ;;(map (partial sort-by second))
+       ;;(map #(first (second %)))
+       ;;(apply str)
+       ;;(vector)
+       ;;binstr->int
+       )))
 
-  )
+ (defn accumulate-vectors [vec-of-vecs]
 
-(day3-part1)
+   )
 
-
-(let [binstr->int (fn [binstr]
-                    (Integer/parseInt binstr 2))
-      reverse-bits (fn [bitstr]
-                     (apply str (map {\0 \1 \1 \0} bitstr)))
-      ]
-  (->>
-    (day3-part1)
-    (apply map vector)                                      ; Transpose
-    ;  (map frequencies)   ; returns seq of maps
-    ;(map (partial sort-by second))
-    ;(map #(first (second %)))
-    ;(apply str)
-    ;(vector)
-    ;  binstr->int
-    ))
+ (day3-part1)
 
 
+ (let [binstr->int (fn [binstr]
+                     (Integer/parseInt binstr 2))
+       reverse-bits (fn [bitstr]
+                      (apply str (map {\0 \1 \1 \0} bitstr)))
+       ]
+   (->>
+     (day3-part1)
+     (apply map vector)                                     ; Transpose
+     ;  (map frequencies)   ; returns seq of maps
+     ;(map (partial sort-by second))
+     ;(map #(first (second %)))
+     ;(apply str)
+     ;(vector)
+     ;  binstr->int
+     ))
 
-
-
-
+ )

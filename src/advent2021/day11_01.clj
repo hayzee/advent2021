@@ -1,114 +1,54 @@
 (ns advent2021.day11-01)
 
-(def ^:private FILE-NAME "resources/day11-input.txt")
-
-(def ^:private FILE-NAME-TEST "resources/day11-input-test.txt")
 
 (defn file-data
   "Read file data and return a vector of strings for each row."
   [file-name]
   (clojure.string/split (slurp file-name) #"\r\n"))
 
-(defn- file-data-row->grid-row
-  "Convert a file row (a string) to a vector of integer digits"
-  [file-data-row]
-  (mapv #(Character/digit ^char % 10) file-data-row))
+(defn numberify-row
+  [row]
+  (mapv #(Character/digit ^char % 10) row))
 
-(defn file->grid
-  "reate a grid of octopi from the file-data"
+(defn file-data->number-grid
   [file-data]
-  (mapv file-data-row->grid-row file-data))
+  (mapv numberify-row file-data))
 
-;; solution starts here!
+(def grid (file-data->number-grid (file-data FILE-NAME-TEST)))
 
-(defn row-count
-  "return all the rows in the grid"
-  [grid]
-  (count grid))
+(defn inc-row [row]
+  (mapv (fn [e] (if (= e 9) 0 (inc e))) row))
 
-(defn col-count
-  "return all the columns in the grid"
+(defn inc-grid [grid]
+  (mapv inc-row grid))
+
+(defn ncols
   [grid]
   (count (first grid)))
 
-(defn all-coords
-  "return all [r c] coordinates of the grid"
+(defn nrows
   [grid]
-  (for [rw (range (row-count grid))
-        cl (range (col-count grid))]
-    [rw cl]))
+  (count grid))
 
-(defn inc-grid
-  "increment all cells in the grid, returning a new grid"
-  [grid]
-  (map (fn [rw] (mapv inc rw)) grid))
-
-(defn find-grid
-  "search the grid for all elements that satisfy pred?, returning all coords in the grid"
-  [grid pred?]
-  (filter #(pred? (get-in grid %)) (all-coords grid)))
-
-(defn surrounds-coords
-  "return all coords that surround [r c] within grid"
-  [grid [r c]]
-  (let [num-rows (dec (count grid))
-        num-cols (dec (count (first grid)))
-        at       (partial get-in grid)]
-    (for [rw (range (dec r) (+ 2 r))
-          cl (range (dec c) (+ 2 c))
-          :when (and
-                  (not= [rw cl] [r c])
-                  (<= 0 rw num-rows)
-                  (<= 0 cl num-cols)
-                  (not (contains? #{0 10} (at [rw cl])))
-                  )]
+(defn surrounding-coords
+  [[r c] grid]
+  (vec
+    (for [rw (range (dec r) (+ r 2))
+          cl (range (dec c) (+ c 2))
+          :when (and (<= 0 rw (nrows grid))
+                     (<= 0 cl (ncols grid))
+                     (not= [rw cl] [r c]))]
       [rw cl])))
 
-(defn flasher?
-  [cell]
-  "predicate to determine if a the cell is flashing"
-  (= 10 cell))
+(defn inc-flasher-neighbour
+  [e]
+  (if (= e 0)
+    0
+    (if (= e 9)
+      0
+      (inc e))))
 
-(defn find-flashers
-  [grid]
-  "find all the flashers in a grid"
-  (find-grid grid flasher?))
+(defn update-coords
+  [grid v-coords update-fn]
+  (reduce (fn [g c] (update-in g c update-fn)) grid v-coords))
 
-(defn get-flasher-adjacents
-  "given a grid and a seq of flashers coords, return the set of coords of cells that are
-  adjacent to those flashers, which are themselves not flashers (i.e. not 10 or 0)
-  "
-  [grid]
-  (set
-    (mapcat
-      #(surrounds-coords grid %)
-      (find-flashers grid))))
-
-(defn apply-to-grid [grid coords f]
-  (reduce
-    (fn [a e] (update-in a e f))
-    grid
-    coords))
-
-(defn grid-step
-  ;; yuk - requires rework!
-  [grid]
-  (let [igrid (inc-grid grid)
-        ifadj (get-flasher-adjacents igrid)]
-    (if (seq ifadj)
-      (grid-step (apply-to-grid igrid ifadj inc))
-      igrid)))
-
-
-; Algorithm - (per step)
-; ======================
-; 1. increment the grid
-; 2. while identify flashers
-;     2a. increment-flasher-adjacents
-;     2b. set flashers to 0 - but not new flashers from 2a.
-
-
-;; scratch area
-
-;(let [thegrid (inc-grid simple-grid-0)]
-;  (get-flasher-adjacents thegrid (find-flashers thegrid)))

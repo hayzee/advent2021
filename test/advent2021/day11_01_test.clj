@@ -1,189 +1,60 @@
 (ns advent2021.day11-01-test
   (:require [clojure.test :refer :all])
-  (:require [advent2021.day11-01 :refer :all])
-  (:require [advent2021.util :refer :all]))
+  (:require [advent2021.day11-01 :as sut]))
 
-(def simple-grid-0
-  [[1 1 1 1 1]
-   [1 9 9 9 1]
-   [1 9 1 9 1]
-   [1 9 9 9 1]
-   [1 1 1 1 1]])
+(def ^:private FILE-NAME "resources/day11-input.txt")
 
-(def simple-grid-1
-  [[1 1 1 1]
-   [1 9 9 1]
-   [1 1 1 1]])
+(def ^:private FILE-NAME-TEST "resources/day11-input-test.txt")
 
-(def simple-grid-f
-  [[2 2 2 2 2]
-   [2 10 10 10 2]
-   [2 10 2 10 2]
-   [2 10 10 10 2]
-   [2 2 2 2 2]])
+(deftest file-data-test
+  (is (= ["11111" "19991" "19191" "19991" "11111"]
+       (sut/file-data FILE-NAME-TEST))))
 
-(deftest row-count-test
-  (is (= (row-count simple-grid-0)
-         5)))
+(deftest numberify-row-test
+  (is (= [2 1 4 3 6 5 8 7 0 9] (sut/numberify-row "2143658709"))))
 
-(deftest col-count-test
-  (is (= (col-count simple-grid-1)
-         4)))
+(def grid (sut/file-data->number-grid (sut/file-data FILE-NAME-TEST)))
 
-(deftest all-coords-test
-  (is (= (all-coords simple-grid-1)
-         [[0 0] [0 1] [0 2] [0 3] [1 0] [1 1] [1 2] [1 3] [2 0] [2 1] [2 2] [2 3]])))
+(deftest file-data->number-grid-test
+  (is (= [[1 1 1 1 1]
+          [1 9 9 9 1]
+          [1 9 1 9 1]
+          [1 9 9 9 1]
+          [1 1 1 1 1]]
+         grid)))
+
+(deftest inc-row-test
+  (is (= [2 3 4 5 6 7 8 9 0 1] (sut/inc-row (sut/inc-row (range 10))))))
 
 (deftest inc-grid-test
-  (is (= (inc-grid simple-grid-1)
-         [[2 2 2 2]
-          [2 10 10 2]
-          [2 2 2 2]])))
+  (is (= [[2 2 2 2 2]
+          [2 0 0 0 2]
+          [2 0 2 0 2]
+          [2 0 0 0 2]
+          [2 2 2 2 2]] (sut/inc-grid grid))))
 
-(deftest find-grid-test
-  (is (= (find-grid simple-grid-1 #(= 9 %))
-         [[1 1] [1 2]])))
+(deftest ncols-test
+  (is (= 5 (sut/ncols grid))))
 
-(deftest surrounds-coords-test
-  (is (= (surrounds-coords simple-grid-0 [0 0])
-         [[0 1] [1 0] [1 1]]))
-  (is (= (surrounds-coords simple-grid-0 [1 1])
-         [[0 0] [0 1] [0 2] [1 0] [1 2] [2 0] [2 1] [2 2]]))
-  (is (= (surrounds-coords simple-grid-0 [4 4])
-         [[3 3] [3 4] [4 3]])))
+(deftest nrows-test
+  (is (= 5 (sut/nrows grid))))
 
-(deftest flasher?-test
-  (is (flasher? 10)))
+(deftest surrounding-coords-test
+  (is (= [[0 1] [1 0] [1 1]] (sut/surrounding-coords [0 0] grid)))
+  (is (=  [[0 0] [0 1] [0 2] [1 0] [1 2] [2 0] [2 1] [2 2]] (sut/surrounding-coords [1 1] grid)))
+  (is (= [[1 1] [1 2] [1 3] [2 1] [2 3] [3 1] [3 2] [3 3]] (sut/surrounding-coords [2 2] grid)))
+  (is (= [[2 2] [2 3] [2 4] [3 2] [3 4] [4 2] [4 3] [4 4]] (sut/surrounding-coords [3 3] grid)))
+  (is (= [[3 3] [3 4] [3 5] [4 3] [4 5] [5 3] [5 4] [5 5]] (sut/surrounding-coords [4 4] grid)))
+  (is (= [[4 4] [4 5] [5 4]] (sut/surrounding-coords [5 5] grid)))
+  (is (= [[0 4] [1 4] [1 5]] (sut/surrounding-coords [0 5] grid)))
+  (is (= [[4 0] [4 1] [5 1]] (sut/surrounding-coords [5 0] grid))))
 
-(deftest find-flashers-test
-  (is (= ((publicise find-flashers) simple-grid-f)
-         [[1 1] [1 2] [1 3] [2 1] [2 3] [3 1] [3 2] [3 3]])))
+(deftest inc-flasher-neighbour-test
+  (is (= 2 (sut/inc-flasher-neighbour 1)))
+  (is (= 0 (sut/inc-flasher-neighbour 0)))
+  (is (= 0 (sut/inc-flasher-neighbour 9)))
+  (is (= 9 (sut/inc-flasher-neighbour 8))))
 
-(deftest get-flasher-adjacents-test
-  ;  (is (= (get-flasher-adjacents simple-grid-f)))
-  (is (= (get-flasher-adjacents [[10 1 1]
-                                 [1 1 1]
-                                 [1 1 1]])
-         #{[0 1] [1 0] [1 1]}))
-  (is (= (get-flasher-adjacents [[1 1 1]
-                                 [1 1 1]
-                                 [1 1 10]])
-         #{[1 1] [1 2] [2 1]}))
-  (is (= (get-flasher-adjacents [[10 1 1]
-                                 [1 1 1]
-                                 [1 1 10]])
-         #{[0 1] [1 0] [1 1] [1 2] [2 1]}))
-  (is (= (get-flasher-adjacents [[1 1 1]
-                                 [1 10 1]
-                                 [1 1 1]])
-         #{[0 0] [0 1] [0 2] [1 0] [1 2] [2 0] [2 1] [2 2]}))
-  (is (= (get-flasher-adjacents [[10 1 1]
-                                 [1 1 1]
-                                 [1 1 10]])
-         #{[0 1] [1 0] [1 1] [1 2] [2 1]}))
-  (is (= (get-flasher-adjacents [[10 10 1]
-                                 [1 1 1]
-                                 [1 1 1]])
-         #{[0 2] [1 0] [1 1] [1 2]}))
-  (is (= (get-flasher-adjacents [[10 10 1]
-                                 [1 1 1]
-                                 [0 0 0]])
-         #{[0 2] [1 0] [1 1] [1 2]}))
-  (is (empty? (get-flasher-adjacents [[0 0 1]
-                                      [1 1 1]
-                                      [0 0 0]])))
-  )
-
-
-
-;(comment
-;
-;  (def t-file-data
-;    ["5483143223"
-;     "2745854711"
-;     "5264556173"
-;     "6141336146"
-;     "6357385478"
-;     "4167524645"
-;     "2176841721"
-;     "6882881134"
-;     "4846848554"
-;     "5283751526"])
-;
-;  (deftest file-data-test
-;    (is (= (file-data FILE-NAME-TEST)
-;           t-file-data)))
-;
-;
-;
-;  (deftest file-data-row->grid-row-test
-;    (is (= ((publicise file-data-row->grid-row) "12345")
-;           [1 2 3 4 5])))
-;
-;  (deftest file->grid-test
-;    (is (= (file->grid t-file-data)
-;           t-grid)))
-;
-;  (deftest inc-octopus-test
-;    (is (= (inc-octopus 0) 1))
-;    (is (= (inc-octopus 1) 2))
-;    (is (= (inc-octopus 8) 9))
-;    (is (= (inc-octopus 9) 0)))
-;
-;  (deftest inc-grid-test
-;    (is (= (inc-grid t-grid)
-;           t-grid-next))
-;    (is (= (inc-grid (inc-grid t-grid))
-;           t-grid-next-next)))
-;
-;  (deftest find-zeros-test
-;    (is (= (find-zeros t-grid-next-next))
-;        [[0 2] [1 4] [4 5] [4 9] [6 4] [7 1] [7 2] [7 4] [7 5] [8 1] [8 4] [8 6] [9 2]]))
-;
-;  (deftest surrounds-coords-test
-;    (is (= ((publicise surrounds-coords) [0 0])
-;           [[0 1] [1 0] [1 1]]))
-;    (is (= ((publicise surrounds-coords) [4 4])
-;           [[3 3] [3 4] [3 5] [4 3] [4 5] [5 3] [5 4] [5 5]]))
-;    (is (= ((publicise surrounds-coords) [10 10])
-;           [[9 9]])))
-;
-;  (deftest surrounds-map-test
-;    (is (= ((publicise surrounds-map) t-grid [0 0])
-;           [{:coord [0 1], :value 4}
-;            {:coord [1 0], :value 2}
-;            {:coord [1 1], :value 7}]))
-;    (is (= ((publicise surrounds-map) t-grid [4 4])
-;           [{:coord [3 3], :value 1}
-;            {:coord [3 4], :value 3}
-;            {:coord [3 5], :value 3}
-;            {:coord [4 3], :value 7}
-;            {:coord [4 5], :value 8}
-;            {:coord [5 3], :value 7}
-;            {:coord [5 4], :value 5}
-;            {:coord [5 5], :value 2}]))
-;    (is (= ((publicise surrounds-map) t-grid [10 10])
-;           [{:coord [9 9], :value 6}])))
-;
-;  (def simple-grid-0
-;    [[1 1 1 1 1]
-;     [1 9 9 9 1]
-;     [1 9 1 9 1]
-;     [1 9 9 9 1]
-;     [1 1 1 1 1]])
-;
-;  (def simple-grid-1
-;    [[3 4 5 4 3]
-;     [4 0 0 0 4]
-;     [5 0 0 0 5]
-;     [4 0 0 0 4]
-;     [3 4 5 4 3]])
-;
-;  (def simple-grid-2
-;    [[4 5 6 5 4]
-;     [5 1 1 1 5]
-;     [6 1 1 1 6]
-;     [5 1 1 1 5]
-;     [4 5 6 5 4]]))
-;
-;
+(deftest update-coords-test
+  (is (= [[0 1 1 1 1] [1 9 9 9 1] [1 9 1 9 1] [1 9 9 9 1] [1 1 1 1 1]]
+         (sut/update-coords grid [[0 0] [0 0] [0 0] [0 0] [0 0] [0 0] [0 0] [0 0] [0 0] [0 0] [0 0] [0 0]] sut/inc-flasher-neighbour))))
