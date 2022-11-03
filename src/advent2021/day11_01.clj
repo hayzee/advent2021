@@ -1,6 +1,5 @@
 (ns advent2021.day11-01)
 
-
 (defn file-data
   "Read file data and return a vector of strings for each row."
   [file-name]
@@ -14,6 +13,8 @@
   [file-data]
   (mapv numberify-row file-data))
 
+; todo - remove this
+(def ^:private FILE-NAME-TEST "resources/day11-input-test.txt")
 (def grid (file-data->number-grid (file-data FILE-NAME-TEST)))
 
 (defn inc-row [row]
@@ -40,6 +41,17 @@
                      (not= [rw cl] [r c]))]
       [rw cl])))
 
+(defn find-in-grid
+  ([grid]
+   (find-in-grid grid nil))
+  ([grid n]
+   (vec
+     (for [r (range (nrows grid))
+           c (range (ncols grid))
+           :when (or (not n)
+                     (= n (get-in grid [r c])))]
+       [r c]))))
+
 (defn inc-flasher-neighbour
   [e]
   (if (= e 0)
@@ -48,7 +60,6 @@
       0
       (inc e))))
 
-(defn update-coords
+(defn update-grid
   [grid v-coords update-fn]
   (reduce (fn [g c] (update-in g c update-fn)) grid v-coords))
-
