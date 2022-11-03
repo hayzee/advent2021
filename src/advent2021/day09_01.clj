@@ -2,8 +2,8 @@
 
 (defn clear-ns []
   (->>
-    (map first (ns-interns *ns*))
-    (map #(ns-unmap *ns* %))))
+   (map first (ns-interns *ns*))
+   (map #(ns-unmap *ns* %))))
 
 (def FILE-NAME "resources/day09-input.txt")
 
@@ -28,14 +28,12 @@
 (defn surrounds
   [hm [r c]]
   (->>
-    [
-     (get-in hm [r c])
-     (get-in hm [r (dec c)])
-     (get-in hm [(dec r) c])
-     (get-in hm [r (inc c)])
-     (get-in hm [(inc r) c])
-     ]
-    (remove nil?)))
+   [(get-in hm [r c])
+    (get-in hm [r (dec c)])
+    (get-in hm [(dec r) c])
+    (get-in hm [r (inc c)])
+    (get-in hm [(inc r) c])]
+   (remove nil?)))
 
 (defn minima? [hm [r c]]
   (let [[f & r] (surrounds hm [r c])]
@@ -45,8 +43,7 @@
   [hm]
   (for [r (range (count hm))
         c (range (count (first hm)))
-        :when (minima? hm [r c])
-        ]
+        :when (minima? hm [r c])]
     (get-in hm [r c])))
 
 (defn risk-level

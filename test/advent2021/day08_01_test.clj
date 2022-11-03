@@ -19,8 +19,6 @@
   (is (= (file-data-row->signal-entry "gcafb gcf dcaebfg ecagb gf abcdeg gaef cafbge fdbac fegbdc | fgae cfgab fg bagce")
          ["gcafb gcf dcaebfg ecagb gf abcdeg gaef cafbge fdbac fegbdc" "fgae cfgab fg bagce"])))
 
-
-
 (deftest signal-entries-test
   (is (= (signal-entries ["be cfbegad cbdgef fgaecd cgeb fdcge agebfd fecdb fabcd edb | fdgacbe cefdb cefbgd gcbe"
                           "edbfga begcd cbg gc gcadebf fbgde acbgfd abcde gfcbed gfec | fcgedb cgb dgebacf gc"

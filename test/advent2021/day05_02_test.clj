@@ -85,7 +85,7 @@
          fdat)))
 
 (deftest line->line-segment-test
-  (is (= (line->line-segment "0,9 -> 5,9") [[0 9][5 9]])))
+  (is (= (line->line-segment "0,9 -> 5,9") [[0 9] [5 9]])))
 
 (deftest line-segments-test
   (is (= (line-segments fdat)
@@ -114,17 +114,17 @@
 
 (deftest line-segment->segment-line-points-test
   ; vertical
-  (is (= (line-segment->segment-line-points [[0 -2][0 2]]) [[0 -2] [0 -1] [0 0] [0 1] [0 2]]))
-  (is (= (line-segment->segment-line-points [[0 2][0 -2]]) [[0 2] [0 1] [0 0] [0 -1] [0 -2]]))
+  (is (= (line-segment->segment-line-points [[0 -2] [0 2]]) [[0 -2] [0 -1] [0 0] [0 1] [0 2]]))
+  (is (= (line-segment->segment-line-points [[0 2] [0 -2]]) [[0 2] [0 1] [0 0] [0 -1] [0 -2]]))
   ; horizontal
-  (is (= (line-segment->segment-line-points [[-2 0][2 0]]) [[-2 0] [-1 0] [0 0] [1 0] [2 0]]))
-  (is (= (line-segment->segment-line-points [[2 0][-2 0]]) [[2 0] [1 0] [0 0] [-1 0] [-2 0]]))
+  (is (= (line-segment->segment-line-points [[-2 0] [2 0]]) [[-2 0] [-1 0] [0 0] [1 0] [2 0]]))
+  (is (= (line-segment->segment-line-points [[2 0] [-2 0]]) [[2 0] [1 0] [0 0] [-1 0] [-2 0]]))
   ; diagonals
-  (is (= (line-segment->segment-line-points [[0 0][3 3]]) [[0 0] [1 1] [2 2] [3 3]]))
-  (is (= (line-segment->segment-line-points [[3 3][0 0]]) [[3 3] [2 2] [1 1] [0 0]]))
-  (is (= (line-segment->segment-line-points [[0 0][-3 -3]]) [[0 0] [-1 -1] [-2 -2] [-3 -3]]))
-  (is (= (line-segment->segment-line-points [[-3 -3][0 0]]) [[-3 -3] [-2 -2] [-1 -1] [0 0]]))
-  (is (= (line-segment->segment-line-points [[-3 -3][3 3]]) [[-3 -3] [-2 -2] [-1 -1] [0 0] [1 1] [2 2] [3 3]])))
+  (is (= (line-segment->segment-line-points [[0 0] [3 3]]) [[0 0] [1 1] [2 2] [3 3]]))
+  (is (= (line-segment->segment-line-points [[3 3] [0 0]]) [[3 3] [2 2] [1 1] [0 0]]))
+  (is (= (line-segment->segment-line-points [[0 0] [-3 -3]]) [[0 0] [-1 -1] [-2 -2] [-3 -3]]))
+  (is (= (line-segment->segment-line-points [[-3 -3] [0 0]]) [[-3 -3] [-2 -2] [-1 -1] [0 0]]))
+  (is (= (line-segment->segment-line-points [[-3 -3] [3 3]]) [[-3 -3] [-2 -2] [-1 -1] [0 0] [1 1] [2 2] [3 3]])))
 
 (deftest line-segments->line-points-test
   (is (= (line-segments->line-points line-segments-dat) line-points-dat)))

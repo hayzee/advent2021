@@ -58,7 +58,7 @@
          fdat)))
 
 (deftest line->line-segment-test
-  (is (= (line->line-segment "0,9 -> 5,9") [[0 9][5 9]])))
+  (is (= (line->line-segment "0,9 -> 5,9") [[0 9] [5 9]])))
 
 (deftest line-segments-test
   (is (= (line-segments fdat)
@@ -86,10 +86,10 @@
   (is (= (range-inclusive 5 -5) [5 4 3 2 1 0 -1 -2 -3 -4 -5])))
 
 (deftest line-segment->segment-line-points-test
-  (is (= (line-segment->segment-line-points [[0 -2][0 2]]) [[0 -2] [0 -1] [0 0] [0 1] [0 2]]))
-  (is (= (line-segment->segment-line-points [[0 2][0 -2]]) [[0 2] [0 1] [0 0] [0 -1] [0 -2]]))
-  (is (= (line-segment->segment-line-points [[-2 0][2 0]]) [[-2 0] [-1 0] [0 0] [1 0] [2 0]]))
-  (is (= (line-segment->segment-line-points [[2 0][-2 0]]) [[2 0] [1 0] [0 0] [-1 0] [-2 0]])))
+  (is (= (line-segment->segment-line-points [[0 -2] [0 2]]) [[0 -2] [0 -1] [0 0] [0 1] [0 2]]))
+  (is (= (line-segment->segment-line-points [[0 2] [0 -2]]) [[0 2] [0 1] [0 0] [0 -1] [0 -2]]))
+  (is (= (line-segment->segment-line-points [[-2 0] [2 0]]) [[-2 0] [-1 0] [0 0] [1 0] [2 0]]))
+  (is (= (line-segment->segment-line-points [[2 0] [-2 0]]) [[2 0] [1 0] [0 0] [-1 0] [-2 0]])))
 
 (deftest line-segments->line-points-test
   (is (= (line-segments->line-points line-segments-dat) line-points-dat)))

@@ -13,8 +13,8 @@
   ; Take a single row of file-data and create a single signal-entry.
   [file-data-row]
   (->>
-    (clojure.string/split file-data-row #"\|")
-    (mapv clojure.string/trim)))
+   (clojure.string/split file-data-row #"\|")
+   (mapv clojure.string/trim)))
 
 (defn signal-entries
   ; Create signal-entries [a vector of signal-entry] from file data.
@@ -26,8 +26,7 @@
    4 4
    3 7
    7 8
-   1 \|
-   })
+   1 \|})
 
 ;; Part 1
 
@@ -39,17 +38,16 @@
 ;; Check with test file
 
 (->>
-  (signal-entries (file-data FILE-NAME-TEST))
-  (mapcat signal-output-tokens)
-  (remove nil?)
-  count)
-
+ (signal-entries (file-data FILE-NAME-TEST))
+ (mapcat signal-output-tokens)
+ (remove nil?)
+ count)
 
 ;; Actual file
 
 (->>
-  (signal-entries (file-data FILE-NAME))
-  (mapcat signal-output-tokens)
-  (remove nil?)
-  count)
+ (signal-entries (file-data FILE-NAME))
+ (mapcat signal-output-tokens)
+ (remove nil?)
+ count)
 

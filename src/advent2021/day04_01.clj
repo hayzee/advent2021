@@ -4,7 +4,7 @@
   ;
   [file]
   (->>
-    (clojure.string/split (slurp file) #"\r\n")))
+   (clojure.string/split (slurp file) #"\r\n")))
 
 ; test - keep for now
 ;(def file-data (read-data "resources/day4-input-test.txt"))
@@ -13,7 +13,7 @@
 (defn get-bingo-calls
   [file-data]
   (read-string
-    (str "[" (first file-data) "]")))
+   (str "[" (first file-data) "]")))
 
 ; test
 (def bingo-calls (get-bingo-calls file-data))
@@ -21,12 +21,12 @@
 (defn get-next-board
   [file-data]
   (->>
-    (drop 1 file-data)
-    (take 5)
-    (map #(str "[" % "]"))
-    (apply str)
-    (#(str "[" % "]"))
-    (read-string)))
+   (drop 1 file-data)
+   (take 5)
+   (map #(str "[" % "]"))
+   (apply str)
+   (#(str "[" % "]"))
+   (read-string)))
 
 (defn get-all-boards
   [file-data]
@@ -46,10 +46,10 @@
 (defn check-number
   [number board]
   (->>
-    (apply concat board)
-    (mapv #(if (= number %) (- number) %))
-    (partition 5)
-    (mapv vec)))
+   (apply concat board)
+   (mapv #(if (= number %) (- number) %))
+   (partition 5)
+   (mapv vec)))
 
 ; test
 ; (def board (first (get-board-data file-data)))
@@ -75,18 +75,17 @@
     (when (some filled? all-rowcols)
       (score-board board))))
 
-
 (winning-board?
-  [[1 -2 3 -4]
-   [-1 2 -3 -4]
-   [-1 2 3 4]
-   [-1 2 3 -4]])
+ [[1 -2 3 -4]
+  [-1 2 -3 -4]
+  [-1 2 3 4]
+  [-1 2 3 -4]])
 
 (score-board
-  [[1 -2 3 -4]
-   [-1 -2 -3 -4]
-   [-1 2 3 -4]
-   [-1 2 3 -4]])
+ [[1 -2 3 -4]
+  [-1 -2 -3 -4]
+  [-1 2 3 -4]
+  [-1 2 3 -4]])
 
 (defn update-boards
   [boards num]
@@ -103,8 +102,8 @@
          :last-call this-bingo-call
          :score     (* this-bingo-call board-score)}
         (apply-bingo-calls
-          updated-boards
-          (rest bingo-calls))))
+         updated-boards
+         (rest bingo-calls))))
     nil))
 
 (apply-bingo-calls board-data bingo-calls)
@@ -119,10 +118,10 @@
 (defn update-board
   [board number]
   (->>
-    (apply concat board)
-    (mapv #(if (= number %) (- number) %))
-    (partition 5)
-    (mapv vec)))
+   (apply concat board)
+   (mapv #(if (= number %) (- number) %))
+   (partition 5)
+   (mapv vec)))
 
 (defn is-winning-board?
   [board]
@@ -131,8 +130,7 @@
 
 (defn check-board [board]
   {:board board
-   :is-winning-board? (is-winning-board? board)}
-  )
+   :is-winning-board? (is-winning-board? board)})
 
 (def board-data2 board-data)
 

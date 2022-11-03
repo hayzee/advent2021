@@ -17,9 +17,9 @@
   ; Take a single row of file-data and create a single signal-entry.
   [file-data-row]
   (->>
-    (clojure.string/split file-data-row #"\|")
-    (mapv clojure.string/trim)
-    (mapv str->wordvec)))
+   (clojure.string/split file-data-row #"\|")
+   (mapv clojure.string/trim)
+   (mapv str->wordvec)))
 
 ; num     #segs   unique              check order
 ; ======= ======= ==============			===========
@@ -49,24 +49,23 @@
   ; Infer digit mappings for a given signal-input
   [signal-input]
   (->>
-    (sort-by count signal-input)
-    (reduce
-      (fn [a e]
-        (let [e (set e)]
-          (cond
-            (= 2 (count e)) (conj a [\1 e])
-            (= 3 (count e)) (conj a [\7 e])
-            (= 4 (count e)) (conj a [\4 e])
-            (and (= 5 (count e)) (subsumes? (set e) (set (a \7)))) (conj a [\3 e])
-            (and (= 5 (count e)) (= 2 (diffsize (set e) (set (a \4))))) (conj a [\2 e])
-            (and (= 5 (count e)) (= 1 (diffsize (set e) (set (a \4))))) (conj a [\5 e])
-            (and (= 6 (count e)) (not (subsumes? (set e) (set (a \1))))) (conj a [\6 e])
-            (and (= 6 (count e)) (subsumes? (set e) (set (a \4)))) (conj a [\9 e])
-            (and (= 6 (count e)) (not (subsumes? (set e) (set (a \4))))) (conj a [\0 e])
-            (= 7 (count e)) (conj a [\8 e])
-            :else (conj a [e "??"])))) {})
-    clojure.set/map-invert))
-
+   (sort-by count signal-input)
+   (reduce
+    (fn [a e]
+      (let [e (set e)]
+        (cond
+          (= 2 (count e)) (conj a [\1 e])
+          (= 3 (count e)) (conj a [\7 e])
+          (= 4 (count e)) (conj a [\4 e])
+          (and (= 5 (count e)) (subsumes? (set e) (set (a \7)))) (conj a [\3 e])
+          (and (= 5 (count e)) (= 2 (diffsize (set e) (set (a \4))))) (conj a [\2 e])
+          (and (= 5 (count e)) (= 1 (diffsize (set e) (set (a \4))))) (conj a [\5 e])
+          (and (= 6 (count e)) (not (subsumes? (set e) (set (a \1))))) (conj a [\6 e])
+          (and (= 6 (count e)) (subsumes? (set e) (set (a \4)))) (conj a [\9 e])
+          (and (= 6 (count e)) (not (subsumes? (set e) (set (a \4))))) (conj a [\0 e])
+          (= 7 (count e)) (conj a [\8 e])
+          :else (conj a [e "??"])))) {})
+   clojure.set/map-invert))
 
 (defn decode-signal-ouput
   [[signal-input signal-output]]
@@ -75,22 +74,21 @@
          (map set)
          (map digit-map))))
 
-
 ;; Test answer !!!
 (->>
-  (file-data FILE-NAME-TEST)
-  (map file-data-row->signal-entry)
-  (map decode-signal-ouput)
-  (map #(apply str %))
-  (map #(Integer/parseInt %))
-  (reduce +))
+ (file-data FILE-NAME-TEST)
+ (map file-data-row->signal-entry)
+ (map decode-signal-ouput)
+ (map #(apply str %))
+ (map #(Integer/parseInt %))
+ (reduce +))
 
 ;; The answer !!!
 (->>
-  (file-data FILE-NAME)
-  (map file-data-row->signal-entry)
-  (map decode-signal-ouput)
-  (map #(apply str %))
-  (map #(Integer/parseInt %))
-  (reduce +))
+ (file-data FILE-NAME)
+ (map file-data-row->signal-entry)
+ (map decode-signal-ouput)
+ (map #(apply str %))
+ (map #(Integer/parseInt %))
+ (reduce +))
 

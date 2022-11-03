@@ -34,23 +34,23 @@
 (defn surrounding-coords
   [[r c] grid]
   (vec
-    (for [rw (range (dec r) (+ r 2))
-          cl (range (dec c) (+ c 2))
-          :when (and (<= 0 rw (nrows grid))
-                     (<= 0 cl (ncols grid))
-                     (not= [rw cl] [r c]))]
-      [rw cl])))
+   (for [rw (range (dec r) (+ r 2))
+         cl (range (dec c) (+ c 2))
+         :when (and (<= 0 rw (nrows grid))
+                    (<= 0 cl (ncols grid))
+                    (not= [rw cl] [r c]))]
+     [rw cl])))
 
 (defn find-in-grid
   ([grid]
    (find-in-grid grid nil))
   ([grid n]
    (vec
-     (for [r (range (nrows grid))
-           c (range (ncols grid))
-           :when (or (not n)
-                     (= n (get-in grid [r c])))]
-       [r c]))))
+    (for [r (range (nrows grid))
+          c (range (ncols grid))
+          :when (or (not n)
+                    (= n (get-in grid [r c])))]
+      [r c]))))
 
 (defn inc-flasher-neighbour
   [e]

@@ -8,11 +8,11 @@
   ; state is a vector of fish counts (of length 9) for fish status 0 -> 8 inclusive.
   [fish-data]
   (->>
-    (merge
-      (into {} (map vector (range 9) (repeat 0)))
-      (frequencies fish-data))
-    sort
-    (mapv second)))
+   (merge
+    (into {} (map vector (range 9) (repeat 0)))
+    (frequencies fish-data))
+   sort
+   (mapv second)))
 
 ; test
 (fish-data->fish-state test-fish-data)
@@ -58,23 +58,20 @@
      last
      (reduce +))
 
-
-
-
 (comment
 
   ;; defunct - this is a bad idea !!!
 
   (defn dec-rotate [n]
-  (let [dv (dec n)]
-    (if (neg? dv)
-      6
-      dv)))
+    (let [dv (dec n)]
+      (if (neg? dv)
+        6
+        dv)))
 
-(defn lantern-life [state]
-  (let [state-dec (mapv dec-rotate state)
-        new-gen (repeat (count (filter zero? state)) 8)]
-    (apply conj state-dec new-gen)))
+  (defn lantern-life [state]
+    (let [state-dec (mapv dec-rotate state)
+          new-gen (repeat (count (filter zero? state)) 8)]
+      (apply conj state-dec new-gen)))
 
-(defn generate-lantern-fish [state days]
-  (take (inc days) (iterate lantern-life state))))
+  (defn generate-lantern-fish [state days]
+    (take (inc days) (iterate lantern-life state))))

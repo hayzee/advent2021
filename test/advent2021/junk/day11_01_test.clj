@@ -91,8 +91,7 @@
          #{[0 2] [1 0] [1 1] [1 2]}))
   (is (empty? (get-flasher-adjacents [[0 0 1]
                                       [1 1 1]
-                                      [0 0 0]])))
-  )
+                                      [0 0 0]]))))
 
 (grid-step simple-grid-0)
 

@@ -36,11 +36,11 @@
 
 (defn syntax-error-score [file-data]
   (->>
-    file-data
-    (map remove-brackets)
-    (map invalid?)
-    (map syntax-error-score-char)
-    (reduce +)))
+   file-data
+   (map remove-brackets)
+   (map invalid?)
+   (map syntax-error-score-char)
+   (reduce +)))
 
 ; 26397
 (syntax-error-score (file-data FILE-NAME-TEST))

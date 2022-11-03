@@ -24,7 +24,7 @@
         to (if (neg? step) (dec to) (inc to))]
     (range from to step)))
 
- (defn line-segment->segment-line-points
+(defn line-segment->segment-line-points
   "Generate a set of points for a given line-segment.
   For part 2, this has been enhanced to allow for
   vertical, horizontal and diagonal line segments."
@@ -39,23 +39,23 @@
   Line segments that overlap will result in >1 of the same line point."
   [line-segments]
   (mapcat
-    line-segment->segment-line-points
-    line-segments))
+   line-segment->segment-line-points
+   line-segments))
 
 (defn line-point-overlaps
   "Determine which line points are in overlapping line segments."
   [line-points]
   (filter
-    #(> (second %) 1)
-    (frequencies line-points)))
+   #(> (second %) 1)
+   (frequencies line-points)))
 
 (defn count-overlaps
   "Given file-data, determine the line point overlaps."
   [file-data]
   (count
-    (line-point-overlaps
-      (line-segments->line-points
-        (line-segments file-data)))))
+   (line-point-overlaps
+    (line-segments->line-points
+     (line-segments file-data)))))
 
 (count-overlaps (file-data FILE-NAME-TEST))
 

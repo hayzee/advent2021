@@ -8,7 +8,7 @@
 
 (deftest file-data-test
   (is (= ["11111" "19991" "19191" "19991" "11111"]
-       (sut/file-data FILE-NAME-TEST))))
+         (sut/file-data FILE-NAME-TEST))))
 
 (deftest numberify-row-test
   (is (= [2 1 4 3 6 5 8 7 0 9] (sut/numberify-row "2143658709"))))
@@ -41,7 +41,7 @@
 
 (deftest surrounding-coords-test
   (is (= [[0 1] [1 0] [1 1]] (sut/surrounding-coords [0 0] grid)))
-  (is (=  [[0 0] [0 1] [0 2] [1 0] [1 2] [2 0] [2 1] [2 2]] (sut/surrounding-coords [1 1] grid)))
+  (is (= [[0 0] [0 1] [0 2] [1 0] [1 2] [2 0] [2 1] [2 2]] (sut/surrounding-coords [1 1] grid)))
   (is (= [[1 1] [1 2] [1 3] [2 1] [2 3] [3 1] [3 2] [3 3]] (sut/surrounding-coords [2 2] grid)))
   (is (= [[2 2] [2 3] [2 4] [3 2] [3 4] [4 2] [4 3] [4 4]] (sut/surrounding-coords [3 3] grid)))
   (is (= [[3 3] [3 4] [3 5] [4 3] [4 5] [5 3] [5 4] [5 5]] (sut/surrounding-coords [4 4] grid)))

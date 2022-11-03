@@ -36,21 +36,21 @@
 (defn line-segments->line-points
   [line-segments]
   (mapcat
-    line-segment->segment-line-points
-    line-segments))
+   line-segment->segment-line-points
+   line-segments))
 
 (defn line-point-overlaps
   [line-points]
   (filter
-    #(> (second %) 1)
-    (frequencies line-points)))
+   #(> (second %) 1)
+   (frequencies line-points)))
 
 (defn count-overlaps
   [file-data]
   (count
-    (line-point-overlaps
-      (line-segments->line-points
-        (line-segments file-data)))))
+   (line-point-overlaps
+    (line-segments->line-points
+     (line-segments file-data)))))
 
 (count-overlaps (file-data FILE-NAME-TEST))
 

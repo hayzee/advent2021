@@ -10,8 +10,8 @@
 
 (defn read-data [file]
   (->>
-    (clojure.string/split (slurp file) #"\r\n")
-    (mapv binstr->binvec)))
+   (clojure.string/split (slurp file) #"\r\n")
+   (mapv binstr->binvec)))
 
 ; test
 ;(read-data "resources/day3-input-test.txt")
@@ -19,10 +19,10 @@
 (defn gamma-rate [binvec]
   (let [boundary (quot (count binvec) 2)]
     (->>
-      (apply map + binvec)
-      (map #(if (> % boundary)
-              1
-              0)))))
+     (apply map + binvec)
+     (map #(if (> % boundary)
+             1
+             0)))))
 
 ; test
 ;(gamma-rate
@@ -54,10 +54,9 @@
 ;; the answer
 (let [gamma-rate (gamma-rate (read-data "resources/day3-input.txt"))]
   (->>
-    (vector gamma-rate (invert-bits gamma-rate))
-    (map bin->int)
-    (reduce *)))
-
+   (vector gamma-rate (invert-bits gamma-rate))
+   (map bin->int)
+   (reduce *)))
 
 ; day 3 - Part 2
 
@@ -101,5 +100,5 @@
   (bin->int (get-rating majority-bits diagnostic-report 0)))
 
 (*
-  (scrubber-rating diagnostic-report)
-  (oxygen-generator-rating diagnostic-report))
+ (scrubber-rating diagnostic-report)
+ (oxygen-generator-rating diagnostic-report))

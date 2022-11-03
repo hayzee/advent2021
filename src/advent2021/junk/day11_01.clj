@@ -57,11 +57,10 @@
     (for [rw (range (dec r) (+ 2 r))
           cl (range (dec c) (+ 2 c))
           :when (and
-                  (not= [rw cl] [r c])
-                  (<= 0 rw num-rows)
-                  (<= 0 cl num-cols)
-                  (not (contains? #{0 10} (at [rw cl])))
-                  )]
+                 (not= [rw cl] [r c])
+                 (<= 0 rw num-rows)
+                 (<= 0 cl num-cols)
+                 (not (contains? #{0 10} (at [rw cl]))))]
       [rw cl])))
 
 (defn flasher?
@@ -80,15 +79,15 @@
   "
   [grid]
   (set
-    (mapcat
-      #(surrounds-coords grid %)
-      (find-flashers grid))))
+   (mapcat
+    #(surrounds-coords grid %)
+    (find-flashers grid))))
 
 (defn apply-to-grid [grid coords f]
   (reduce
-    (fn [a e] (update-in a e f))
-    grid
-    coords))
+   (fn [a e] (update-in a e f))
+   grid
+   coords))
 
 (defn grid-step
   ;; yuk - requires rework!
@@ -99,14 +98,12 @@
       (grid-step (apply-to-grid igrid ifadj inc))
       igrid)))
 
-
 ; Algorithm - (per step)
 ; ======================
 ; 1. increment the grid
 ; 2. while identify flashers
 ;     2a. increment-flasher-adjacents
 ;     2b. set flashers to 0 - but not new flashers from 2a.
-
 
 ;; scratch area
 
@@ -117,11 +114,11 @@
        {level1-1 :level1-1}             :level0-2
        {level1-2 :level1-2}             :level0-2
        {{:keys [level2-1 level2-2 level2-4] :as submap} :level1-2} :level0-2 :as fullmap} {:level0-1 "level0-1"
-                                                    :level0-2 {:level1-1 "level1-1"
-                                                               :level1-2 {:level2-1 "level2-1"
-                                                                          :level2-2 "level2-2"
-                                                                          :level2-3 "level2-3"
-                                                                          :level2-4 "level2-4"}}}]
+                                                                                           :level0-2 {:level1-1 "level1-1"
+                                                                                                      :level1-2 {:level2-1 "level2-1"
+                                                                                                                 :level2-2 "level2-2"
+                                                                                                                 :level2-3 "level2-3"
+                                                                                                                 :level2-4 "level2-4"}}}]
   [level0-1
    level1-1
    level1-2
